@@ -1,0 +1,3 @@
+# syntax=alpine:3.20
+FROM alpine:3.20
+RUN echo syntax-probe-alpine-frontend
