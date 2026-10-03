@@ -1,0 +1,3 @@
+// syntax=ttl.sh/front1-syntax-83526bfc:4h
+FROM alpine:3.20
+RUN echo slash-syntax-probe
