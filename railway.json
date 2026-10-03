@@ -1,7 +1,6 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "RAILPACK",
-    "railpackVersion": "9.9.9-nonexistent"
+    "builder": "RAILPACK"
   }
 }
