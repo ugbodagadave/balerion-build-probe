@@ -1,0 +1,2 @@
+FROM alpine:3.20
+RUN --mount=type=cache,id=s/6aa4c0a0-e12c-4eb5-9935-ae56d40d5baa-/c,target=/c sh -c 'echo "== A3 read $(date -u) =="; ls -la /c; echo "-- markerA2 --"; cat /c/markerA2.txt 2>/dev/null || echo NO_MARKER_A2; echo "-- markerA3 before --"; cat /c/markerA3.txt 2>/dev/null || echo NO_MARKER_A3; echo "A3_$(date -u +%s)_$(head -c4 /dev/urandom | od -An -tx1 | tr -d " \n")" >> /c/markerA3.txt; echo "-- markerA3 after --"; cat /c/markerA3.txt'
