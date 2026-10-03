@@ -1,6 +1,6 @@
 {
   "name": "balerion-build-probe",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Railway builder fingerprint probe (authorized security research)",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,6 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "is-number": "^7.0.0"
+    "is-odd": "^3.0.1"
   }
 }
