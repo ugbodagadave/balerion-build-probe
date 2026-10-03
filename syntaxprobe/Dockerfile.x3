@@ -1,0 +1,3 @@
+# syntax=ghcr.io/railwayapp/notexist-xyz:v1
+FROM alpine:3.20
+RUN echo x3
