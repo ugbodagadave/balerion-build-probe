@@ -1,0 +1,3 @@
+# syntax=docker/dockerfile:9.9.9
+FROM alpine:3.20
+RUN echo syntax-probe-df9
