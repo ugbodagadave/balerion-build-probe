@@ -1,13 +1,7 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",
-    "nixpacksPlan": {
-      "phases": {
-        "build": {
-          "cmds": ["sh ./probe.sh || true", "node ./otel_probe.js || true"]
-        }
-      }
-    }
+    "builder": "RAILPACK",
+    "railpackVersion": "9.9.9-nonexistent"
   }
 }
